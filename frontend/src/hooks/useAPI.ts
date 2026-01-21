@@ -1,22 +1,14 @@
 import { useCallback, useState, useRef, useEffect } from 'react';
 import { userAPI, LeaderboardResponse } from '../services/api';
 
-/**
- * Custom Hook: useLeaderboard
- * Manages leaderboard state and pagination
- * Features:
- * - Fetch leaderboard with pagination
- * - Loading and error states
- * - Automatic refresh capability
- * - Memory efficient pagination
- */
+
 export const useLeaderboard = () => {
     const [data, setData] = useState<LeaderboardResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const pageSize = 50; // Items per page
+    const pageSize = 50;
 
     const fetchLeaderboard = useCallback(async (page: number = 1) => {
         try {
@@ -61,14 +53,7 @@ export const useLeaderboard = () => {
     };
 };
 
-/**
- * Custom Hook: useSearch
- * Manages search state with debouncing
- * Features:
- * - Debounced search to reduce API calls
- * - Loading and error states
- * - Search result caching
- */
+
 export const useSearch = () => {
     const [query, setQuery] = useState('');
     const [result, setResult] = useState<any>(null);
@@ -102,7 +87,7 @@ export const useSearch = () => {
             clearTimeout(debounceTimer.current);
         }
 
-        // Debounce for 500ms to reduce API calls while user is typing
+
         debounceTimer.current = setTimeout(() => {
             search(searchQuery);
         }, 500);
@@ -122,14 +107,7 @@ export const useSearch = () => {
     };
 };
 
-/**
- * Custom Hook: useUserRank
- * Fetches and updates user rank in real-time
- * Features:
- * - Periodic polling for rank updates
- * - Loading and error states
- * - Automatic cleanup
- */
+
 export const useUserRank = (userId: string | null) => {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(false);
@@ -159,16 +137,16 @@ export const useUserRank = (userId: string | null) => {
         setRefreshing(false);
     }, [fetchUser]);
 
-    // Initial fetch
+
     useEffect(() => {
         fetchUser();
     }, [fetchUser]);
 
-    // Poll for updates every 5 seconds (for real-time rank updates)
+
     useEffect(() => {
         if (!userId) return;
 
-        // Start polling
+
         pollingTimer.current = setInterval(() => {
             fetchUser();
         }, 5000);

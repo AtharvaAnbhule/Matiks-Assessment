@@ -13,16 +13,6 @@ import {
 } from "react-native";
 import { useLeaderboard } from "../hooks/useAPI";
 
-/**
- * Leaderboard Screen Component
- * Displays paginated leaderboard with real-time ranking
- * Features:
- * - Pagination support
- * - Pull-to-refresh
- * - Loading states
- * - Error handling
- * - Responsive layout
- */
 const LeaderboardScreen: React.FC = () => {
   const {
     data,
@@ -36,13 +26,10 @@ const LeaderboardScreen: React.FC = () => {
   } = useLeaderboard();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Always fetch leaderboard on mount
   React.useEffect(() => {
     fetchLeaderboard(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle pull-to-refresh gesture
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     Promise.resolve(fetchLeaderboard(currentPage)).finally(() =>
@@ -50,11 +37,10 @@ const LeaderboardScreen: React.FC = () => {
     );
   }, [fetchLeaderboard, currentPage]);
 
-  // Render individual leaderboard entry
   const renderEntry = ({ item, index }: { item: any; index: number }) => {
-    const isHighRank = item.rank <= 10; // Highlight top 10
+    const isHighRank = item.rank <= 10;
     const isMediumRank = item.rank <= 100;
-    // Use a color palette for avatars
+
     const avatarColors = [
       "#FFD700",
       "#FF8C00",
@@ -101,7 +87,6 @@ const LeaderboardScreen: React.FC = () => {
     );
   };
 
-  // Render pagination controls
   const renderPagination = () => (
     <View style={styles.paginationContainer}>
       <TouchableOpacity

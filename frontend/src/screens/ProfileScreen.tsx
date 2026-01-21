@@ -12,16 +12,6 @@ import {
 } from "react-native";
 import { userAPI } from "../services/api";
 
-/**
- * Profile Screen Component
- * Allows users to view and update their profile
- * Features:
- * - Create new user
- * - View current rank and rating
- * - Update rating
- * - Real-time rank calculation
- * - Input validation
- */
 const ProfileScreen: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
@@ -32,9 +22,7 @@ const ProfileScreen: React.FC = () => {
   const [updatingRating, setUpdatingRating] = useState(false);
   const [userInfo, setUserInfo] = useState<any>(null);
 
-  // Create new user
   const handleCreateUser = useCallback(async () => {
-    // Validation
     if (!userId.trim()) {
       Alert.alert("Error", "User ID is required");
       return;
@@ -68,7 +56,6 @@ const ProfileScreen: React.FC = () => {
     }
   }, [userId, username, initialRating]);
 
-  // Update user rating
   const handleUpdateRating = useCallback(async () => {
     if (!userInfo?.id) {
       Alert.alert("Error", "User not loaded");
@@ -96,7 +83,6 @@ const ProfileScreen: React.FC = () => {
     }
   }, [userInfo?.id, newRating]);
 
-  // Fetch user details
   const handleFetchUser = useCallback(async () => {
     if (!userId.trim()) {
       Alert.alert("Error", "User ID is required");
@@ -115,7 +101,6 @@ const ProfileScreen: React.FC = () => {
     }
   }, [userId]);
 
-  // Reset form
   const handleReset = useCallback(() => {
     setUserId("");
     setUsername("");
@@ -137,7 +122,6 @@ const ProfileScreen: React.FC = () => {
           <View style={styles.formSection}>
             <Text style={styles.sectionTitle}>Create New User</Text>
 
-            {/* User ID Input */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>User ID</Text>
               <TextInput
@@ -150,7 +134,6 @@ const ProfileScreen: React.FC = () => {
               />
             </View>
 
-            {/* Username Input */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Username</Text>
               <TextInput
@@ -167,7 +150,6 @@ const ProfileScreen: React.FC = () => {
               </Text>
             </View>
 
-            {/* Initial Rating Input */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Initial Rating</Text>
               <TextInput
@@ -184,7 +166,6 @@ const ProfileScreen: React.FC = () => {
               </Text>
             </View>
 
-            {/* Create User Button */}
             <TouchableOpacity
               style={[
                 styles.button,
@@ -200,7 +181,6 @@ const ProfileScreen: React.FC = () => {
               )}
             </TouchableOpacity>
 
-            {/* Fetch User Section */}
             <View style={styles.divider} />
             <Text style={styles.sectionTitle}>Or Load Existing User</Text>
 
@@ -231,7 +211,6 @@ const ProfileScreen: React.FC = () => {
           <View style={styles.profileSection}>
             <Text style={styles.sectionTitle}>User Profile</Text>
 
-            {/* User Info Card */}
             <View style={styles.infoCard}>
               <View style={styles.infoItem}>
                 <Text style={styles.infoLabel}>Username</Text>
@@ -262,7 +241,6 @@ const ProfileScreen: React.FC = () => {
               </View>
             </View>
 
-            {/* Update Rating Section */}
             <View style={styles.updateSection}>
               <Text style={styles.sectionTitle}>Update Rating</Text>
 
@@ -295,7 +273,6 @@ const ProfileScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Reset Button */}
             <TouchableOpacity
               style={[styles.button, styles.dangerButton]}
               onPress={handleReset}>

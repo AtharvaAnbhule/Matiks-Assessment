@@ -9,20 +9,16 @@ import (
 	"go.uber.org/zap"
 )
 
-// RateLimiter implements token bucket rate limiting algorithm
-// Prevents abuse and ensures fair resource usage
-// Provides per-IP and global rate limiting
+ 
 type RateLimiter struct {
 	tokens      map[string]float64
 	maxTokens   float64
-	refillRate  float64 // tokens per second
+	refillRate  float64  
 	lastRefill  map[string]time.Time
 	mu          sync.RWMutex
 }
 
-// NewRateLimiter creates a new rate limiter
-// maxTokens: maximum tokens per IP
-// requestsPerSecond: token refill rate
+ 
 func NewRateLimiter(maxTokens float64, requestsPerSecond float64) *RateLimiter {
 	return &RateLimiter{
 		tokens:     make(map[string]float64),
@@ -32,16 +28,14 @@ func NewRateLimiter(maxTokens float64, requestsPerSecond float64) *RateLimiter {
 	}
 }
 
-// Allow checks if request should be allowed
-// Uses token bucket algorithm: refills tokens over time, consumes on request
-// Returns false if rate limit exceeded
+ 
 func (rl *RateLimiter) Allow(clientID string) bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 
 	now := time.Now()
 
-	// Refill tokens based on time elapsed
+	 
 	lastRefill, exists := rl.lastRefill[clientID]
 	if !exists {
 		rl.tokens[clientID] = rl.maxTokens
@@ -53,7 +47,7 @@ func (rl *RateLimiter) Allow(clientID string) bool {
 		rl.lastRefill[clientID] = now
 	}
 
-	// Check if we have tokens
+	 
 	if rl.tokens[clientID] >= 1.0 {
 		rl.tokens[clientID]--
 		return true
@@ -62,11 +56,9 @@ func (rl *RateLimiter) Allow(clientID string) bool {
 	return false
 }
 
-// RateLimitMiddleware returns a Gin middleware for rate limiting
-// Limits to 100 requests per second per IP
-// Allows burst of 200 requests
+ 
 func RateLimitMiddleware() gin.HandlerFunc {
-	limiter := NewRateLimiter(200, 100) // 200 token capacity, 100 tokens/sec refill
+	limiter := NewRateLimiter(200, 100)  
 	logger, _ := zap.NewDevelopment()
 
 	return func(c *gin.Context) {
@@ -89,7 +81,7 @@ func RateLimitMiddleware() gin.HandlerFunc {
 	}
 }
 
-// LoggingMiddleware logs HTTP requests and responses
+ 
 func LoggingMiddleware(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()
@@ -107,7 +99,7 @@ func LoggingMiddleware(logger *zap.Logger) gin.HandlerFunc {
 	}
 }
 
-// CORSMiddleware enables CORS for frontend access
+ 
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -124,7 +116,7 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-// Helper function
+ 
 func min(a, b float64) float64 {
 	if a < b {
 		return a
