@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: leaderboard_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+
+  # Golang Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: leaderboard_backend
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgresql://user:password@ep-your-project.neon.tech:5432/neon?sslmode=require
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      PORT: 8080
+      ENV: production
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    name: leaderboard_network
