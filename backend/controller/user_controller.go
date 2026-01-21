@@ -11,19 +11,13 @@ import (
 	"leaderboard-system/service"
 )
 
-// UserController handles HTTP requests for user operations
-// Implements REST API endpoints
-// Responsibilities:
-// - Request validation
-// - HTTP status codes
-// - Error handling
-// - Logging
+
 type UserController struct {
 	service *service.UserService
 	logger  *zap.Logger
 }
 
-// NewUserController creates a new controller instance
+
 func NewUserController(service *service.UserService, logger *zap.Logger) *UserController {
 	return &UserController{
 		service: service,
@@ -31,21 +25,20 @@ func NewUserController(service *service.UserService, logger *zap.Logger) *UserCo
 	}
 }
 
-// ErrorResponse represents API error response format
+
 type ErrorResponse struct {
 	Error     string `json:"error"`
 	Message   string `json:"message"`
 	Timestamp string `json:"timestamp"`
 }
 
-// SuccessResponse represents successful API response wrapper
+
 type SuccessResponse struct {
 	Success bool        `json:"success"`
 	Data    interface{} `json:"data"`
 }
 
-// CreateUser handles POST /users
-// Creates a new user with initial rating
+
 func (ctrl *UserController) CreateUser(c *gin.Context) {
 	var req struct {
 		UserID       string `json:"user_id" binding:"required"`
@@ -80,8 +73,7 @@ func (ctrl *UserController) CreateUser(c *gin.Context) {
 	})
 }
 
-// GetUser handles GET /users/:user_id
-// Returns user info with current rank
+
 func (ctrl *UserController) GetUser(c *gin.Context) {
 	userID := c.Param("user_id")
 
@@ -96,7 +88,7 @@ func (ctrl *UserController) GetUser(c *gin.Context) {
 		return
 	}
 
-	// Add rank to response
+
 	response := gin.H{
 		"id":       userDTO.ID,
 		"username": userDTO.Username,
@@ -110,9 +102,7 @@ func (ctrl *UserController) GetUser(c *gin.Context) {
 	})
 }
 
-// UpdateRating handles PUT /users/:user_id/rating
-// Updates user's rating and triggers rank recalculation
-// Non-blocking: returns immediately while cache invalidation happens async
+
 func (ctrl *UserController) UpdateRating(c *gin.Context) {
 	userID := c.Param("user_id")
 
@@ -154,10 +144,7 @@ func (ctrl *UserController) UpdateRating(c *gin.Context) {
 	})
 }
 
-// SearchUser handles GET /users/search?username=query
-// Searches for user by username (case-insensitive)
-// Returns user info with rank if found
-// Implements debounce on frontend to reduce API calls
+
 func (ctrl *UserController) SearchUser(c *gin.Context) {
 	username := c.Query("username")
 
@@ -181,7 +168,7 @@ func (ctrl *UserController) SearchUser(c *gin.Context) {
 		return
 	}
 
-	// Return null user if not found, but 200 OK
+
 	if userDTO == nil {
 		c.JSON(http.StatusOK, SuccessResponse{
 			Success: true,
@@ -204,11 +191,7 @@ func (ctrl *UserController) SearchUser(c *gin.Context) {
 	})
 }
 
-// GetLeaderboard handles GET /leaderboard?page=1&page_size=100
-// Returns paginated leaderboard with ranks
-// Pagination params:
-// - page: 1-based page number (default: 1)
-// - page_size: items per page, max 1000 (default: 100)
+
 func (ctrl *UserController) GetLeaderboard(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	pageSize := c.DefaultQuery("page_size", "100")
@@ -240,10 +223,7 @@ func (ctrl *UserController) GetLeaderboard(c *gin.Context) {
 	})
 }
 
-// GetLeaderboardAroundUser handles GET /users/:user_id/leaderboard-context
-// Returns leaderboard entries around user's position
-// Shows context: users before and after target user
-// Useful for showing how user ranks relative to others
+
 func (ctrl *UserController) GetLeaderboardAroundUser(c *gin.Context) {
 	userID := c.Param("user_id")
 	contextSize := c.DefaultQuery("context_size", "10")
@@ -270,8 +250,7 @@ func (ctrl *UserController) GetLeaderboardAroundUser(c *gin.Context) {
 	})
 }
 
-// Health handles GET /health
-// Returns service health status
+
 func (ctrl *UserController) Health(c *gin.Context) {
 	healthy := ctrl.service.IsHealthy(c.Request.Context())
 

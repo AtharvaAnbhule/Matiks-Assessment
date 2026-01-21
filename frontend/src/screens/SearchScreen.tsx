@@ -11,16 +11,6 @@ import {
 } from "react-native";
 import { useSearch, useUserRank } from "../hooks/useAPI";
 
-/**
- * Search Screen Component
- * Allows users to search by username and see their rank
- * Features:
- * - Debounced search (500ms) to reduce API calls
- * - Real-time rank display
- * - Case-insensitive search
- * - Loading and error states
- * - Live rank updates (5 second polling)
- */
 const SearchScreen: React.FC = () => {
   const { query, result, loading, error, debouncedSearch, clearSearch } =
     useSearch();
@@ -30,7 +20,6 @@ const SearchScreen: React.FC = () => {
   const [isFocused, setIsFocused] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
 
-  // Handle search input change with debounce
   const handleSearchChange = useCallback(
     (text: string) => {
       debouncedSearch(text);
@@ -38,13 +27,11 @@ const SearchScreen: React.FC = () => {
     [debouncedSearch],
   );
 
-  // Clear search when user clears input
   const handleClearSearch = useCallback(() => {
     clearSearch();
     searchInputRef.current?.clear();
   }, [clearSearch]);
 
-  // Render search result card
   const renderSearchResult = () => {
     if (!result?.found) {
       return (
@@ -61,31 +48,26 @@ const SearchScreen: React.FC = () => {
 
     return (
       <View style={styles.resultCard}>
-        {/* Rank Badge */}
         <View style={styles.rankBadge}>
           <Text style={styles.rankBadgeText}>#{displayUser.rank}</Text>
         </View>
 
-        {/* User Info */}
         <View style={styles.userInfoSection}>
           <Text style={styles.usernameDisplay}>{displayUser.username}</Text>
           <Text style={styles.ratingDisplay}>Rating: {displayUser.rating}</Text>
         </View>
 
-        {/* Live Status Indicator */}
         <View style={styles.liveIndicator}>
           <View style={styles.liveDot} />
           <Text style={styles.liveText}>Live</Text>
         </View>
 
-        {/* Loading indicator for live updates */}
         {refreshing && (
           <View style={styles.refreshingIndicator}>
             <ActivityIndicator size="small" color="#007AFF" />
           </View>
         )}
 
-        {/* Additional Stats */}
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Your Rank</Text>
@@ -98,7 +80,6 @@ const SearchScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Rank Progress */}
         <View style={styles.progressSection}>
           <Text style={styles.progressLabel}>Ranking Level</Text>
           <View style={styles.progressBarContainer}>
@@ -127,7 +108,6 @@ const SearchScreen: React.FC = () => {
         <Text style={styles.subtitle}>Find your global rank</Text>
       </View>
 
-      {/* Search Input */}
       <View
         style={[
           styles.searchContainer,
@@ -152,7 +132,6 @@ const SearchScreen: React.FC = () => {
         )}
       </View>
 
-      {/* Search Status */}
       {loading && (
         <View style={styles.statusContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
@@ -167,12 +146,10 @@ const SearchScreen: React.FC = () => {
         </View>
       )}
 
-      {/* Search Results */}
       {result && !loading && (
         <View style={styles.resultsContainer}>{renderSearchResult()}</View>
       )}
 
-      {/* Empty State */}
       {!result && !loading && (
         <View style={styles.emptyStateContainer}>
           <Text style={styles.emptyStateIcon}>🔎</Text>

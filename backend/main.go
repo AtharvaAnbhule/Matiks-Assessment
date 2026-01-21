@@ -20,13 +20,13 @@ import (
 )
 
 func main() {
-	// Load .env file first (contains DATABASE_URL for Neon)
+	 
 	_ = godotenv.Load()
 
-	// Load configuration
+ 
 	cfg := config.GetConfig()
 
-	// Initialize logger
+	 
 	var log *zap.Logger
 	var err error
 	if cfg.Server.Env == "production" {
@@ -44,7 +44,7 @@ func main() {
 		zap.String("port", cfg.Server.Port),
 	)
 
-	// Initialize database
+	 
 	logLevel := logger.Silent
 	if cfg.Server.Env != "production" {
 		logLevel = logger.Info
@@ -57,7 +57,7 @@ func main() {
 
 	log.Info("Database connected")
 
-	// Seed initial data (only in non-production)
+	 
 	if cfg.Server.Env != "production" {
 		if err := database.SeedData(db); err != nil {
 			log.Warn("Failed to seed data", zap.Error(err))
@@ -66,7 +66,7 @@ func main() {
 		}
 	}
 
-	// Initialize cache
+ 
 	cacheManager, err := cache.NewCacheManager(&cfg.Redis)
 	if err != nil {
 		log.Fatal("Failed to initialize cache", zap.Error(err))
@@ -75,17 +75,17 @@ func main() {
 
 	log.Info("Cache connected")
 
-	// Setup Gin router
+ 
 	if cfg.Server.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	router := gin.New()
 
-	// Setup routes
+ 
 	routes.SetupRoutes(router, db, cacheManager, log)
 
-	// Create HTTP server
+ 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cfg.Server.Port),
 		Handler:      router,
@@ -94,7 +94,7 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Start server in goroutine
+ 
 	go func() {
 		log.Info("Server starting", zap.String("address", server.Addr))
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -102,14 +102,14 @@ func main() {
 		}
 	}()
 
-	// Wait for interrupt signal
+ 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
 	log.Info("Shutting down server...")
 
-	// Graceful shutdown with timeout
+ 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 

@@ -11,9 +11,6 @@ import { userAPI } from "../services/api";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-/**
- * Splash Screen - shown while checking API health
- */
 const SplashScreen: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
   const [loading, setLoading] = useState(true);
   const [apiReady, setApiReady] = useState(false);
@@ -25,11 +22,11 @@ const SplashScreen: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
         setApiReady(isHealthy);
       } catch (error) {
         console.warn("API health check failed:", error);
-        // Continue anyway - might be offline but data could be cached
+
         setApiReady(true);
       } finally {
         setLoading(false);
-        // Simulate splash screen duration
+
         setTimeout(onFinish, 1000);
       }
     };
@@ -52,10 +49,6 @@ const SplashScreen: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
   );
 };
 
-/**
- * Bottom Tab Navigation
- * Three main sections: Leaderboard, Search, Profile
- */
 const TabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
@@ -94,10 +87,6 @@ const TabNavigator: React.FC = () => {
   );
 };
 
-/**
- * Root Navigator
- * Manages splash screen and main navigation
- */
 export const RootNavigator: React.FC = () => {
   const [isSplashFinished, setIsSplashFinished] = useState(false);
 
